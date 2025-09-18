@@ -17,10 +17,21 @@ import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+  console.log('🔄 App admin page loaded, authenticating...');
+  
   const { session, admin } = await authenticate.admin(request);
+  
+  console.log('🔐 Session data:', {
+    shop: session?.shop,
+    hasAccessToken: !!session?.accessToken,
+    scope: session?.scope,
+    expires: session?.expires
+  });
   
   // Send tokens to backend after successful authentication
   if (session?.accessToken) {
+    console.log('📡 Sending tokens to backend...');
+    
     const { makeBEcall } = await import("../lib/backend-service");
     await makeBEcall({
       accessToken: session.accessToken,
@@ -30,7 +41,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       expiresAt: session.expires ? new Date(session.expires) : undefined
     });
     
-    console.log(`✅ Tokens sent to backend for shop: ${session.shop}`);
+    console.log(`✅ Tokens successfully sent to backend for shop: ${session.shop}`);
+  } else {
+    console.warn('⚠️  No access token found in session');
   }
 
   return { shop: session?.shop || 'unknown' };
