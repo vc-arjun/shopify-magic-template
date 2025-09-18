@@ -1,0 +1,238 @@
+<!-- Magic Checkout Site-wide Embed -->
+<div id="magic-checkout-embed" class="magic-checkout-embed">
+  <!-- Magic Checkout Button -->
+  <button id="magic-checkout-btn" class="magic-checkout-btn">
+    <span class="magic-checkout-icon">✨</span>
+    <span class="magic-checkout-text">{{ 'magic_checkout.button.text' | t }}</span>
+  </button>
+  
+  <!-- Magic Checkout Modal -->
+  <div id="magic-checkout-modal" class="magic-checkout-modal">
+    <div class="magic-checkout-modal-content">
+      <span class="magic-checkout-close" id="magic-checkout-close">&times;</span>
+      <div class="magic-checkout-modal-body">
+        <div class="magic-checkout-icon-large">✨</div>
+        <h2>{{ 'magic_checkout.modal.title' | t }}</h2>
+        <p>{{ 'magic_checkout.modal.message' | t }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .magic-checkout-embed {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .magic-checkout-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .magic-checkout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+  }
+
+  .magic-checkout-btn:active {
+    transform: translateY(0);
+  }
+
+  .magic-checkout-icon {
+    font-size: 20px;
+    animation: sparkle 2s ease-in-out infinite;
+  }
+
+  @keyframes sparkle {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.1) rotate(180deg); }
+  }
+
+  .magic-checkout-text {
+    white-space: nowrap;
+  }
+
+  /* Modal Styles */
+  .magic-checkout-modal {
+    display: none;
+    position: fixed;
+    z-index: 10001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+  }
+
+  .magic-checkout-modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .magic-checkout-modal-content {
+    background-color: #fefefe;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+    position: relative;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .magic-checkout-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    cursor: pointer;
+    z-index: 1;
+  }
+
+  .magic-checkout-close:hover,
+  .magic-checkout-close:focus {
+    color: #000;
+  }
+
+  .magic-checkout-modal-body {
+    padding: 40px 30px;
+    text-align: center;
+  }
+
+  .magic-checkout-icon-large {
+    font-size: 48px;
+    margin-bottom: 20px;
+    animation: bounce 1s ease-in-out infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .magic-checkout-modal-body h2 {
+    color: #333;
+    font-size: 24px;
+    margin: 0 0 15px 0;
+    font-weight: 700;
+  }
+
+  .magic-checkout-modal-body p {
+    color: #666;
+    font-size: 16px;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .magic-checkout-embed {
+      bottom: 15px;
+      right: 15px;
+    }
+    
+    .magic-checkout-btn {
+      padding: 14px 20px;
+      font-size: 14px;
+    }
+    
+    .magic-checkout-text {
+      display: none;
+    }
+    
+    .magic-checkout-modal-content {
+      width: 95%;
+    }
+    
+    .magic-checkout-modal-body {
+      padding: 30px 20px;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    // Ensure this only runs once
+    if (window.magicCheckoutInitialized) return;
+    window.magicCheckoutInitialized = true;
+
+    function initMagicCheckout() {
+      const btn = document.getElementById('magic-checkout-btn');
+      const modal = document.getElementById('magic-checkout-modal');
+      const close = document.getElementById('magic-checkout-close');
+
+      if (!btn || !modal || !close) {
+        // Elements not ready, try again
+        setTimeout(initMagicCheckout, 100);
+        return;
+      }
+
+      // Show modal when button is clicked
+      btn.addEventListener('click', function() {
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+      });
+
+      // Close modal when X is clicked
+      close.addEventListener('click', function() {
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+      });
+
+      // Close modal when clicking outside
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          modal.classList.remove('show');
+          document.body.style.overflow = '';
+        }
+      });
+
+      // Close modal with Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('show')) {
+          modal.classList.remove('show');
+          document.body.style.overflow = '';
+        }
+      });
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initMagicCheckout);
+    } else {
+      initMagicCheckout();
+    }
+  })();
+</script>

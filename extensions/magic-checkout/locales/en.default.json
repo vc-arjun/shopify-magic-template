@@ -1,0 +1,11 @@
+{
+  "magic_checkout": {
+    "button": {
+      "text": "Magic Checkout"
+    },
+    "modal": {
+      "title": "Magic Checkout Initiated",
+      "message": "Your magic checkout experience is about to begin! ✨"
+    }
+  }
+}
