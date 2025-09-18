@@ -203,6 +203,9 @@
       btn.addEventListener('click', function() {
         modal.classList.add('show');
         document.body.style.overflow = 'hidden';
+        
+        // Send order management event to your backend
+        handleMagicCheckout();
       });
 
       // Close modal when X is clicked
@@ -226,6 +229,46 @@
           document.body.style.overflow = '';
         }
       });
+    }
+
+    // Handle Magic Checkout order management
+    function handleMagicCheckout() {
+      console.log('🪄 Magic Checkout initiated!');
+      
+      // Collect current cart/order information
+      const orderData = {
+        shop: window.Shopify?.shop || window.location.hostname,
+        timestamp: new Date().toISOString(),
+        cartItems: window.ShopifyAnalytics?.meta?.page?.customerId ? 'customer_logged_in' : 'anonymous',
+        pageUrl: window.location.href,
+        userAgent: navigator.userAgent
+      };
+      
+      // TODO: Send to your backend for order processing
+      console.log('📦 Order data for backend:', orderData);
+      
+      // Call your backend API
+      // Example:
+      /*
+      fetch('https://your-backend.razorpay.com/api/magic-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'magic_checkout_initiated',
+          shop: orderData.shop,
+          data: orderData
+        })
+      }).then(response => response.json())
+        .then(result => {
+          console.log('✅ Backend response:', result);
+          // Handle successful response
+        })
+        .catch(error => {
+          console.error('❌ Backend error:', error);
+        });
+      */
     }
 
     // Initialize when DOM is ready

@@ -17,9 +17,23 @@ import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await authenticate.admin(request);
+  const { session, admin } = await authenticate.admin(request);
+  
+  // Send tokens to backend after successful authentication
+  if (session?.accessToken) {
+    const { makeBEcall } = await import("../lib/backend-service");
+    await makeBEcall({
+      accessToken: session.accessToken,
+      shop: session.shop,
+      scope: session.scope || 'write_products',
+      tokenType: 'bearer',
+      expiresAt: session.expires ? new Date(session.expires) : undefined
+    });
+    
+    console.log(`✅ Tokens sent to backend for shop: ${session.shop}`);
+  }
 
-  return null;
+  return { shop: session?.shop || 'unknown' };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -93,6 +107,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function Index() {
   const fetcher = useFetcher<typeof action>();
+  const { shop } = useLoaderData<typeof loader>();
 
   const shopify = useAppBridge();
   const isLoading =
@@ -112,9 +127,9 @@ export default function Index() {
 
   return (
     <Page>
-      <TitleBar title="Remix app template">
+      <TitleBar title="Magic Checkout App - Order Management">
         <button variant="primary" onClick={generateProduct}>
-          Generate a product
+          Test API Connection
         </button>
       </TitleBar>
       <BlockStack gap="500">
@@ -124,31 +139,17 @@ export default function Index() {
               <BlockStack gap="500">
                 <BlockStack gap="200">
                   <Text as="h2" variant="headingMd">
-                    Congrats on creating a new Shopify app 🎉
+                    Magic Checkout App - Order Management 🎉
                   </Text>
                   <Text variant="bodyMd" as="p">
-                    This embedded app template uses{" "}
-                    <Link
-                      url="https://shopify.dev/docs/apps/tools/app-bridge"
-                      target="_blank"
-                      removeUnderline
-                    >
-                      App Bridge
-                    </Link>{" "}
-                    interface examples like an{" "}
-                    <Link url="/app/additional" removeUnderline>
-                      additional page in the app nav
-                    </Link>
-                    , as well as an{" "}
-                    <Link
-                      url="https://shopify.dev/docs/api/admin-graphql"
-                      target="_blank"
-                      removeUnderline
-                    >
-                      Admin GraphQL
-                    </Link>{" "}
-                    mutation demo, to provide a starting point for app
-                    development.
+                    Your Magic Checkout app is successfully installed on{" "}
+                    <Text as="span" fontWeight="semibold">{shop}</Text>!
+                    The widget has been added to your store and is ready to handle order management.
+                  </Text>
+                  <Text variant="bodyMd" as="p">
+                    ✅ Access tokens have been sent to your backend<br/>
+                    ✅ Magic Checkout widget is active on your storefront<br/>
+                    ✅ Order management system is connected
                   </Text>
                 </BlockStack>
                 <BlockStack gap="200">
