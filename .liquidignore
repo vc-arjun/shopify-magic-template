@@ -1,0 +1,4 @@
+# Ignore extension files during template processing
+extensions/**/*.liquid
+blocks/**/*.liquid
+snippets/**/*.liquid
