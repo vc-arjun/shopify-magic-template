@@ -1,9 +1,7 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-
-import { login } from "../../shopify.server";
-
 import styles from "./styles.module.css";
+import { getOAuthUrl } from "app/utils/config";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
@@ -12,11 +10,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     throw redirect(`/app?${url.searchParams.toString()}`);
   }
 
-  return { showForm: Boolean(login) };
+  return null;
 };
 
 export default function App() {
-  const url = `https://${process.env.SHOP_ID}.myshopify.com/admin/oauth/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URL}&state=${process.env.MERCHANT_ID}&response_type=code`;
+  const url = getOAuthUrl();
+
   return (
     <div className={styles.index}>
       <div className={styles.content}>

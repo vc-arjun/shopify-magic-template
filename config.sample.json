@@ -1,0 +1,8 @@
+{
+  "client_id": "",
+  "merchant_id": "",
+  "shop_id": "",
+  "app_url": "https://localhost:3458",
+  "scopes": "",
+  "redirect_url": "https://localhost:3458/auth/callback"
+}
