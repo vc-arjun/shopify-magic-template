@@ -14,8 +14,6 @@ database.sqlite
 .env
 .env.*
 /app/config.json
-shopify.app.toml
-
 
 
 /extensions/*/dist
