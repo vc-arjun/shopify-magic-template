@@ -14,7 +14,7 @@
     "start": "remix-serve ./build/server/index.js",
     "docker-start": "npm run setup && npm run start",
     "setup": "prisma generate && prisma migrate deploy",
-    "setup-client": "tsx setup-client.ts",
+    "config:init": "tsx scripts/setup-config.ts && tsx scripts/setup-client.ts && tsx scripts/setup-embed.ts",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint . --max-warnings=0",
     "shopify": "shopify",
     "prisma": "prisma",

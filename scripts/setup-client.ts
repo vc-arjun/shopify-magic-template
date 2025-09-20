@@ -41,7 +41,7 @@ function loadConfig(): AppConfig {
       "redirect_url",
     ];
 
-    const missingFields = requiredFields.filter((field) => !config[field]);
+    const missingFields = requiredFields.filter((field) => typeof config[field] !== "string");
 
     if (missingFields.length > 0) {
       throw new Error(
@@ -89,8 +89,9 @@ try {
   process.exit(1);
 }
 
-// Path to the TOML file
-const tomlPath = path.join(__dirname, "shopify.app.toml");
+// Path to the TOML file (go up one level from scripts/ to project root)
+const projectRoot = path.join(__dirname, "..");
+const tomlPath = path.join(projectRoot, "shopify.app.toml");
 
 try {
   // Generate the complete TOML content
@@ -127,27 +128,4 @@ redirect_urls = [ "${config.redirect_url}" ]
   process.exit(1);
 }
 
-// Path to the Magic Checkout button block file
-const magicCheckoutBlockPath = path.join(__dirname, "extensions", "magic-checkout", "blocks", "magic_checkout_button.liquid");
 
-try {
-  // Generate the Magic Checkout block content
-  const magicCheckoutBlockContent = `<!-- Magic Checkout Site-wide Block -->
-{% render 'magic_checkout_embed' %}
-
-{% schema %}
-{
-  "name": "Magic Checkout",
-  "target": "body"
-}
-{% endschema %}
-`;
-
-  // Write the Magic Checkout block content to the file
-  fs.writeFileSync(magicCheckoutBlockPath, magicCheckoutBlockContent, "utf8");
-  console.log("✅ Successfully generated magic_checkout_button.liquid block file");
-} catch (error: unknown) {
-  const errorMessage = error instanceof Error ? error.message : String(error);
-  console.error("❌ Error generating Magic Checkout block file:", errorMessage);
-  process.exit(1);
-}
